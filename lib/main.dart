@@ -48,15 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              "Регистрация",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.greenAccent,
+                foregroundColor: Colors.green,
+                textStyle: const TextStyle(fontSize: 18),
               ),
-            ),
+              child: const Text('Нажми меня!'),
+            )
           ],
+
         ),
       ),
     );
