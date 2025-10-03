@@ -45,28 +45,34 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              "Регистрация",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: const Text(
+                "Регистрация",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
-                foregroundColor: Colors.green,
-                textStyle: const TextStyle(fontSize: 18),
+            Padding(
+              padding: EdgeInsets.all(100.0),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.greenAccent,
+                  foregroundColor: Colors.green,
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+                child: const Text('Нажми меня!'),
               ),
-              child: const Text('Нажми меня!'),
-            )
+            ),
           ],
-
         ),
       ),
     );
