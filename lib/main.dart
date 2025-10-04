@@ -1,8 +1,8 @@
-import 'package:flut3/reason_screen.dart';
+import 'package:flut3/class_screen.dart';
 import 'package:flut3/summary_screen.dart';
 import 'package:flut3/thanks_screen.dart';
 import 'package:flutter/material.dart';
-import 'class_screen.dart';
+import 'rating_screen.dart';
 import 'details_screen.dart';
 
 enum AppScreen {
@@ -102,7 +102,7 @@ class _MainNavigatorState extends State<MainNavigator> {
       );
     } else if (_currentScreen == AppScreen.classSelection) {
       return ClassScreen(
-        onClassSelected: _updateClass,
+        onReasonSelected: _updateClass,
         onBack: _goBack,
         canGoBack: true,
       );

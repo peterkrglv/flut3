@@ -30,12 +30,6 @@ class ThankYouScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Ваше мнение помогает нам улучшать сервис.',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
 
               OutlinedButton(
                 onPressed: onStartNewReview,

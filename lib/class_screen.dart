@@ -1,29 +1,36 @@
 import 'package:flutter/material.dart';
 
-class RatingScreen extends StatefulWidget {
-  final Function(int) onRatingSelected;
+class ClassScreen extends StatefulWidget {
+  final Function(String) onReasonSelected;
   final VoidCallback onBack;
   final bool canGoBack;
 
-  const RatingScreen({
+  const ClassScreen({
     super.key,
-    required this.onRatingSelected,
+    required this.onReasonSelected,
     required this.onBack,
     required this.canGoBack,
   });
 
   @override
-  State<RatingScreen> createState() => _RatingScreenState();
+  State<ClassScreen> createState() => _ClassScreenState();
 }
 
-class _RatingScreenState extends State<RatingScreen> {
-  int? _localSelectedRating;
+class _ClassScreenState extends State<ClassScreen> {
+  String? _selectedClass;
+
+  final List<String> _taxiClasses = const [
+    'Эконом',
+    'Комфорт',
+    'Бизнес',
+    'Минивэн',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Шаг 1 из 4: Оценка'),
+        title: const Text('Шаг 2 из 4: Класс поездки'),
         backgroundColor: Colors.blue.shade700,
         leading: widget.canGoBack
             ? IconButton(
@@ -41,58 +48,49 @@ class _RatingScreenState extends State<RatingScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               const Text(
-                'Пожалуйста, оцените поездку:',
+                'Выберите класс такси, на котором вы ехали:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  final int rating = index + 1;
-                  final bool isSelected = _localSelectedRating == rating;
-
-                  final Color backgroundColor = isSelected ? Colors.amber.shade700 : Colors.grey[300]!;
-                  final Color foregroundColor = isSelected ? Colors.white : Colors.black87;
-                  final Color borderColor = isSelected ? Colors.amber.shade800 : Colors.grey.shade400;
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _localSelectedRating = rating;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: backgroundColor,
-                        foregroundColor: foregroundColor,
-                        side: BorderSide(
-                          color: borderColor,
-                          width: 2,
-                        ),
+              ..._taxiClasses.map((taxiClass) {
+                final bool isSelected = _selectedClass == taxiClass;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedClass = taxiClass;
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: isSelected ? Colors.deepPurple.shade600 : Colors.grey,
+                        width: isSelected ? 3 : 1,
                       ),
-                      child: Text(
-                        '$rating',
-                        style: TextStyle(
-                          color: foregroundColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      padding: const EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                  );
-                }),
-              ),
+                    child: Text(
+                      taxiClass,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: isSelected ? Colors.deepPurple.shade600 : Colors.black87,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+
               const SizedBox(height: 40),
 
               ElevatedButton(
-                onPressed: _localSelectedRating != null
-                    ? () => widget.onRatingSelected(_localSelectedRating!)
+                onPressed: _selectedClass != null
+                    ? () => widget.onReasonSelected(_selectedClass!)
                     : null,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
