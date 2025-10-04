@@ -1,4 +1,17 @@
+import 'package:flut3/reason_screen.dart';
+import 'package:flut3/summary_screen.dart';
+import 'package:flut3/thanks_screen.dart';
 import 'package:flutter/material.dart';
+import 'class_screen.dart';
+import 'details_screen.dart';
+
+enum AppScreen {
+  rating,
+  classSelection,
+  details,
+  summary,
+  thankYou,
+}
 
 void main() {
   runApp(const ReviewApp());
@@ -10,269 +23,110 @@ class ReviewApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Симулятор Отзыва Таксисту',
+      title: 'Симулятор Отзыва',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ReviewScreen(),
+      home: const MainNavigator(),
     );
   }
 }
 
-class ReviewScreen extends StatefulWidget {
-  const ReviewScreen({super.key});
+class MainNavigator extends StatefulWidget {
+  const MainNavigator({super.key});
 
   @override
-  State<ReviewScreen> createState() => _ReviewScreenState();
+  State<MainNavigator> createState() => _MainNavigatorState();
 }
 
-class _ReviewScreenState extends State<ReviewScreen> {
-  int? _selectedRating;
-  bool _isReviewSubmitted = false;
+class _MainNavigatorState extends State<MainNavigator> {
+  AppScreen _currentScreen = AppScreen.rating;
 
-  void _selectRating(int rating) {
+  int? _selectedRating;
+  String? _selectedClass;
+  String? _detailedComment;
+
+  void _navigateTo(AppScreen screen) {
     setState(() {
-      _selectedRating = rating;
-      _isReviewSubmitted = false;
+      _currentScreen = screen;
     });
+  }
+
+  void _goBack() {
+    setState(() {
+      if (_currentScreen == AppScreen.classSelection) {
+        _currentScreen = AppScreen.rating;
+        _selectedRating = null;
+      } else if (_currentScreen == AppScreen.details) {
+        _currentScreen = AppScreen.classSelection;
+        _detailedComment = null;
+      } else if (_currentScreen == AppScreen.summary) {
+        _currentScreen = AppScreen.details;
+      } else if (_currentScreen == AppScreen.thankYou) {
+        _currentScreen = AppScreen.rating;
+        _selectedRating = null;
+        _selectedClass = null;
+        _detailedComment = null;
+      } else {
+        _currentScreen = AppScreen.rating;
+      }
+    });
+  }
+
+  void _updateRating(int rating) {
+    _selectedRating = rating;
+    _navigateTo(AppScreen.classSelection);
+  }
+
+  void _updateClass(String taxiClass) {
+    _selectedClass = taxiClass;
+    _navigateTo(AppScreen.details);
+  }
+
+  void _updateDetails(String comment) {
+    _detailedComment = comment;
+    _navigateTo(AppScreen.summary);
   }
 
   void _submitReview() {
-    if (_selectedRating != null) {
-      setState(() {
-        _isReviewSubmitted = true;
-      });
-    }
-  }
-
-  void _startNewReview() {
-    setState(() {
-      _selectedRating = null;
-      _isReviewSubmitted = false;
-    });
+    _navigateTo(AppScreen.thankYou);
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isLowRating = _selectedRating != null && _selectedRating! <= 2;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Оцените поездку'),
-        backgroundColor: Colors.blue.shade700,
-      ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: _isReviewSubmitted
-              ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const Text(
-                'Спасибо за оставленный отзыв!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              OutlinedButton(
-                onPressed: _startNewReview,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  side: BorderSide(color: Colors.blue.shade600, width: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  'Оставить новый отзыв',
-                  style: TextStyle(fontSize: 18, color: Colors.blue.shade600),
-                ),
-              ),
-            ],
-          )
-              : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const Text(
-                'Оцените водителя по шкале от 1 до 5:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () => _selectRating(1),
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: _selectedRating == 1 ? Colors.amber.shade700 : Colors.grey[300]!,
-                        foregroundColor: _selectedRating == 1 ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: _selectedRating == 1 ? Colors.amber.shade800 : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '1',
-                        style: TextStyle(
-                          color: _selectedRating == 1 ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () => _selectRating(2),
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: _selectedRating == 2 ? Colors.amber.shade700 : Colors.grey[300]!,
-                        foregroundColor: _selectedRating == 2 ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: _selectedRating == 2 ? Colors.amber.shade800 : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '2',
-                        style: TextStyle(
-                          color: _selectedRating == 2 ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () => _selectRating(3),
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: _selectedRating == 3 ? Colors.amber.shade700 : Colors.grey[300]!,
-                        foregroundColor: _selectedRating == 3 ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: _selectedRating == 3 ? Colors.amber.shade800 : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '3',
-                        style: TextStyle(
-                          color: _selectedRating == 3 ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () => _selectRating(4),
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: _selectedRating == 4 ? Colors.amber.shade700 : Colors.grey[300]!,
-                        foregroundColor: _selectedRating == 4 ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: _selectedRating == 4 ? Colors.amber.shade800 : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '4',
-                        style: TextStyle(
-                          color: _selectedRating == 4 ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: TextButton(
-                      onPressed: () => _selectRating(5),
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(40, 40),
-                        padding: EdgeInsets.zero,
-                        shape: const CircleBorder(),
-                        backgroundColor: _selectedRating == 4 ? Colors.amber.shade700 : Colors.grey[300]!,
-                        foregroundColor: _selectedRating == 4 ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: _selectedRating == 4 ? Colors.amber.shade800 : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        '5',
-                        style: TextStyle(
-                          color: _selectedRating == 5 ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-
-              if (isLowRating)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.shade400),
-                  ),
-                  child: const Text(
-                    'Нам очень жаль, что ваша поездка прошла плохо. Мы учтем ваш отзыв для улучшения сервиса, но компенсации, к сожалению, не предусмотрено.',
-                    style: TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-              ElevatedButton(
-                onPressed: _selectedRating != null ? _submitReview : null,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: Colors.blue.shade600,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Подтвердить отзыв',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    if (_currentScreen == AppScreen.rating) {
+      return RatingScreen(
+        onRatingSelected: _updateRating,
+        onBack: _goBack,
+        canGoBack: false,
+      );
+    } else if (_currentScreen == AppScreen.classSelection) {
+      return ClassScreen(
+        onClassSelected: _updateClass,
+        onBack: _goBack,
+        canGoBack: true,
+      );
+    } else if (_currentScreen == AppScreen.details) {
+      return DetailsScreen(
+        onDetailsEntered: _updateDetails,
+        onBack: _goBack,
+        canGoBack: true,
+      );
+    } else if (_currentScreen == AppScreen.summary) {
+      return SummaryScreen(
+        rating: _selectedRating!,
+        reason: _selectedClass!,
+        comment: _detailedComment,
+        onSubmit: _submitReview,
+        onBack: _goBack,
+        canGoBack: true,
+      );
+    } else if (_currentScreen == AppScreen.thankYou) {
+      return ThankYouScreen(
+        onStartNewReview: _goBack,
+      );
+    } else {
+      return const Scaffold(body: Center(child: Text("Ошибка навигации!")));
+    }
   }
 }
